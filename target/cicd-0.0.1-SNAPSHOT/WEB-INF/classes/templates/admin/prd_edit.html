@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="액상가격비교|액상다나와">
+	<title>액상다나와 | 관리자</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+	<link href="/admin/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/admin/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    
+	<div class="page-container">
+
+		<!--page navigation -->
+		<div class="page-nav">
+			<a href="#" onclick="goCateEdit()" class="nav-logo">
+				<img src="/admin/images/logo_wh.png">
+			</a>
+		<hr>
+			<ul class="nav nav-pills flex-column mb-auto">
+				<li><a href="#" onclick="goCateEdit()" class="nav-link">분류 관리</a></li>
+				<li><a href="#" onclick="goPrdList()" class="nav-link active">상품 관리</a></li>
+				<li><a href="#" onclick="goPrdAdd()" class="nav-link">상품 등록</a></li>
+			</ul>
+		</div>
+		<!--//page navigation -->
+
+
+		<!--page contents -->
+		<div class="page-contents">
+				
+			<!--page title-->
+			<div class="page-title">
+				<h3 class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+				  <span class="fs-5 fw-semibold">상품 수정</span>
+				</h3>
+			</div>
+			<!--page title-->
+			
+			<!--product detail-->
+			<div class="prd-detail">
+				
+				<!--name wrap-->
+				<div class="name-wrap">
+					
+					<div class="form-group">
+						<label for="prd-name" class="col-form-label">상품명</label>
+						<div class="input-wrap">
+							<input id="prd-name" type="text" class="form-control"placeholder="상품명을 입력해주세요" th:value="${product.name}">
+						</div>
+					</div>
+					
+					<div class="form-group">
+						<label for="prd-thumb" class="col-form-label">상품사진</label>
+						<div class="input-wrap">
+							<input class="form-control" id="prd-thumb" type="file" onchange="toBase64(event)">
+						</div>
+					</div>
+					
+				</div>
+				<!--//name wrap-->
+				<!--thumb wrap-->
+				<div class="thumb-wrap mb-3">
+					<img id="showImg" th:src="${product.img}">
+				</div>
+				<!--//thumb wrap-->
+				
+				<!--add select-->
+				<div class="form-group add-select">					
+					<label class="col-form-label">상품분류</label>					
+					<!-- category select -->
+					<div class="bg-light row">
+						<div class="col-12" id="cateList">
+							<div th:id="'cate' + ${cate.id}" th:each="cate : ${product.productCategoryDtos}">
+								<input type="text" readonly class="form-control-plaintext" th:value="${cate.categoryOne.toString() == 'MOUTH' ? '입호흡' : '폐호흡'} + ' / ' + ${cate.categoryTwo.toString() == 'BRAND' ? '브랜드' : '맛'} + ' / ' + ${cate.categoryName}">
+								<span th:text="${cate.categoryId}" hidden></span>
+								<button class="btn btn-outline-dark btn-sm" th:onclick="'cateDelete(\'cate' + ${cate.id} + '\')'">삭제</button>
+							</div>
+						</div>
+
+						<!--1차분류-->
+						<div class="col-3 p-3">
+							<select class="form-select" id="cate-one" required="" onchange="changeCateOne()">
+								<option value="">--1차분류--</option>
+								<option value="MOUTH">입호흡</option>
+								<option value="LUNG">폐호흡</option>
+							</select>
+						</div>
+						<!--//1차분류-->
+
+						<!--2차분류-->
+						<div class="col-3 p-3">
+							<select class="form-select" id="cate-two" required="" onchange="changeCateTwo()">
+								<option value="">--2차분류--</option>
+								<option value="BRAND">브랜드</option>
+								<option value="TASTE">맛</option>
+							</select>
+						</div>
+						<!--//2차분류-->
+
+						<!--3차분류-->
+						<div class="col-3 p-3">
+							<select class="form-select" id="cate-name" required="">
+								<option value="">--3차분류--</option>
+							</select>
+						</div>
+						<!--//3차분류-->
+
+						<div class="col-3 p-3">
+							<button class="btn btn-primary" onclick="cateAdd()">추가하기</button>
+						</div>
+					</div>
+					<!-- //category select -->
+				</div>				
+				<!--//add select-->
+				
+				
+				<div class="form-group">
+					<label class="col-form-label">메인진열</label>
+					<div class="form-check pt-2">
+					  <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
+					  <label class="form-check-label" for="flexCheckChecked">
+						진열함
+					  </label>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label class="col-form-label">가격 비교<br>리스트</label>
+					<div class="bg-light">
+						<table class="table">
+						<colgroup>
+							<col width="15%">
+							<col width="10%">
+							<col width="*">
+							<col width="15%">
+						</colgroup>
+						<thead class="table-dark">
+							<tr>
+								<th scope="col">판매처</th>
+								<th scope="col">가격</th>
+								<th scope="col">판매 URL</th>
+								<th scope="col">상품 수정</th>
+							</tr>
+						</thead>
+						<tbody id="compareBody">
+
+							<tr th:id="'compare' + ${compare.id}" th:each="compare : ${product.priceCompareDtos}">
+								<td><input th:id="'siteName' + ${compare.id}" type="text" disabled class="form-control" th:value="${compare.siteName}"></td>
+								<td><input th:id="'sitePrice' + ${compare.id}" type="text" disabled class="form-control" th:value="${compare.sitePrice}"></td>
+								<td><input th:id="'siteLink' + ${compare.id}" type="text" disabled class="form-control" th:value="${compare.siteLink}"></td>
+								<td>
+									<button th:id="'btDelete' + ${compare.id}" class="btn btn-outline-secondary" th:onclick="'compareRemove(\'compare' + ${compare.id} + '\')'">삭제</button>
+									<button th:id="'btEdit' + ${compare.id}" class="btn btn-outline-primary" th:onclick="'compareActive(\'' + ${compare.id} + '\')'">수정</button>
+									<button th:id="'btCancel' + ${compare.id}" class="btn btn-dark" th:onclick="'compareCancel(\'' + ${compare.id} + '\')'" hidden>취소</button>
+									<button th:id="'btSave' + ${compare.id}" class="btn btn-success" th:onclick="'compareSave(\'' + ${compare.id} + '\')'" hidden>저장</button>
+								</td>
+								<td hidden>
+									<input th:id="'hideSiteName' + ${compare.id}" type="text" hidden>
+									<input th:id="'hideSitePrice' + ${compare.id}" type="text" hidden>
+									<input th:id="'hideSiteLink' + ${compare.id}" type="text" hidden>
+								</td>
+							</tr>
+
+						  
+						<!--item 3_추가 아이템 : 상시노출-->
+							<tr id="newSiteTr">
+								<td><input id="newSiteName" type="text" class="form-control" placeholder="판매처"></td>
+								<td><input id="newSitePrice" type="text" class="form-control" placeholder="가격"></td>
+								<td><input id="newSiteLink" type="text" class="form-control" placeholder="URL을 입력하세요"></td>
+								<td><button class="btn btn-primary" onclick="newCompareAdd()">추가</button></td>
+							</tr>
+						<!--//item-->
+							
+					  	</tbody>
+						</table>
+					</div>
+				</div>
+					
+				<div class="btn-wrap">
+					<button type="button" class="btn btn-secondary" onclick="deletePrd()">삭제하기</button>
+					<button type="button" class="btn btn-dark" onclick="goPrdList()">취소하기</button>
+					<button type="button" value="Submit" class="btn btn-primary" onclick="prdSave()">저장하기</button>
+				</div>
+
+			</div>
+			<!--//product detail-->
+
+		</div>
+		<!--// page contents -->
+
+	</div>
+
+
+<script src="/admin/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/admin/js/common.js"></script>
+<script src="/admin/js/admin_redirect.js"></script>
+	<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript">
+	window.onload = function(){
+		var isShowMain = [[${product.showMain}]];
+
+		if (isShowMain == true) {
+			$("#flexCheckChecked").prop('checked', true);
+		}
+	}
+
+	var index = 0;
+	function cateAdd() {
+		var cateOne = $("#cate-one").val();
+		var cateTwo = $("#cate-two").val();
+		var cateName = $("#cate-name").val();
+		var cateId = $("#cate-name").children(":selected").attr("id");
+
+		if (cateOne == '' || cateTwo == '' || cateName == '') {
+			alert("카테고리를 선택 해주세요");
+			return;
+		}
+
+		var now = '';
+		if (cateOne == 'MOUTH' && cateTwo == 'BRAND') {
+			now = '입호흡 / 브랜드';
+		} else if (cateOne == 'MOUTH' && cateTwo == 'TASTE') {
+			now = '입호흡 / 맛';
+		} else if (cateOne == 'LUNG' && cateTwo == 'BRAND') {
+			now = '폐호흡 / 브랜드';
+		} else if (cateOne == 'LUNG' && cateTwo == 'TASTE') {
+			now = '폐호흡 / 맛';
+		}
+		now = now + ' / ' + cateName;
+
+		var text = '<div id="cateAdd' + index  + '">';
+		text += '<input type="text" readonly class="form-control-plaintext" value="' + now + '">';
+		text += '<span hidden>' + cateId + '</span>'
+		text += '<button class="btn btn-outline-dark btn-sm" onclick="cateDelete(\'cateAdd' + index + '\')">삭제</button></div>';
+
+		$("#cateList").append(text);
+		index++;
+	}
+
+	function cateDelete(id) {
+		var removeId = '#' + id;
+		$(removeId).remove();
+	}
+
+	function changeCateOne() {
+		$("#cate-two").val('');
+
+		$("#cate-name").empty();
+        var emptyText = $("<option value=''>--3차분류--</option>");
+        $("#cate-name").append(emptyText);
+        $("#cate-name").val('');
+	}
+
+	function changeCateTwo() {
+		var cateOne = $("#cate-one").val();
+		var cateTwo = $("#cate-two").val();
+
+		if (cateOne == '') {
+			alert('1차 분류를 선택하세요');
+			$("#cate-two").val('');
+			return;
+		}
+
+		$.ajax({
+              url:"/category/find",
+              type:"GET",
+              data:{
+                'cate_one' : cateOne,
+                'cate_two' : cateTwo
+              },
+              contentType: "application/json",
+              success: function(result) {
+                  console.log(result);
+
+                  $("#cate-name").empty();
+                  var emptyText = $("<option value=''>--3차분류--</option>");
+                  $("#cate-name").append(emptyText);
+
+                  for (var cnt = 0; cnt < result.length; cnt++) {
+                  	var option = $("<option id=" + result[cnt].id + " value="+result[cnt].categoryName+">"+result[cnt].categoryName+"</option>");
+                  	$("#cate-name").append(option);
+                  }
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+	}
+
+	function compareActive(id) {
+		$("#siteName" + id).attr("disabled", false);
+		$("#sitePrice" + id).attr("disabled", false);
+		$("#siteLink" + id).attr("disabled", false);
+
+		$("#btCancel" + id).attr("hidden", false);
+		$("#btSave" + id).attr("hidden", false);
+
+		$("#btDelete" + id).attr("hidden", true);
+		$("#btEdit" + id).attr("hidden", true);
+
+		var siteName = $("#siteName" + id).val();
+		var sitePrice = $("#sitePrice" + id).val();
+		var siteLink = $("#siteLink" + id).val();
+
+		$("#hideSiteName" + id).val(siteName);
+		$("#hideSitePrice" + id).val(sitePrice);
+		$("#hideSiteLink" + id).val(siteLink);
+	}
+
+	function newCompareActive(id) {
+		$("#addSiteName" + id).attr("disabled", false);
+		$("#addSitePrice" + id).attr("disabled", false);
+		$("#addSiteLink" + id).attr("disabled", false);
+
+		$("#addBtCancel" + id).attr("hidden", false);
+		$("#addBtSave" + id).attr("hidden", false);
+
+		$("#addBtDelete" + id).attr("hidden", true);
+		$("#addBtEdit" + id).attr("hidden", true);
+
+		var siteName = $("#addSiteName" + id).val();
+		var sitePrice = $("#addSitePrice" + id).val();
+		var siteLink = $("#addSiteLink" + id).val();
+
+		$("#addHideSiteName" + id).val(siteName);
+		$("#addHideSitePrice" + id).val(sitePrice);
+		$("#addHideSiteLink" + id).val(siteLink);
+	}
+
+	function compareRemove(id) {
+		$("#" + id).remove();
+	}
+
+	function compareCancel(id) {
+		compareSave(id);
+		var siteName = $("#hideSiteName" + id).val();
+		var sitePrice = $("#hideSitePrice" + id).val();
+		var siteLink = $("#hideSiteLink" + id).val();
+
+		$("#siteName" + id).val(siteName);
+		$("#sitePrice" + id).val(sitePrice);
+		$("#siteLink" + id).val(siteLink);
+	}
+
+	function newCompareCancel(id) {
+		newCompareSave(id);
+		var siteName = $("#addHideSiteName" + id).val();
+		var sitePrice = $("#addHideSitePrice" + id).val();
+		var siteLink = $("#addHideSiteLink" + id).val();
+
+		$("#addSiteName" + id).val(siteName);
+		$("#addSitePrice" + id).val(sitePrice);
+		$("#addSiteLink" + id).val(siteLink);
+	}
+
+	function compareSave(id) {
+		$("#siteName" + id).attr("disabled", true);
+		$("#sitePrice" + id).attr("disabled", true);
+		$("#siteLink" + id).attr("disabled", true);
+
+		$("#btDelete" + id).attr("hidden", false);
+		$("#btEdit" + id).attr("hidden", false);
+
+		$("#btCancel" + id).attr("hidden", true);
+		$("#btSave" + id).attr("hidden", true);
+	}
+
+	function newCompareSave(id) {
+		$("#addSiteName" + id).attr("disabled", true);
+		$("#addSitePrice" + id).attr("disabled", true);
+		$("#addSiteLink" + id).attr("disabled", true);
+
+		$("#addBtDelete" + id).attr("hidden", false);
+		$("#addBtEdit" + id).attr("hidden", false);
+
+		$("#addBtCancel" + id).attr("hidden", true);
+		$("#addBtSave" + id).attr("hidden", true);
+	}
+
+	var compareAddIndex = 0;
+	function newCompareAdd() {
+		var newSiteName = $("#newSiteName").val();
+		var newSitePrice = $("#newSitePrice").val();
+		var newSiteLink = $("#newSiteLink").val();
+
+		if ( newSiteName == '' || newSitePrice == '' || newSiteLink == '' ) {
+			alert("입력 후 추가 해주세요.");
+			return;
+		}
+
+		$("#newSiteName").val('');
+		$("#newSitePrice").val('');
+		$("#newSiteLink").val('');
+
+		var text = '<tr id="addCompare' + compareAddIndex + '"><td><input id="addSiteName' + compareAddIndex + '" type="text" disabled class="form-control" value="' + newSiteName + '"></td>';
+		text += '<td><input id="addSitePrice' + compareAddIndex + '" type="text" disabled class="form-control" value="' + newSitePrice + '"></td>';
+		text += '<td><input id="addSiteLink' + compareAddIndex + '" type="text" disabled class="form-control" value="' + newSiteLink + '"></td>';
+		text += '<td><button id="addBtDelete' + compareAddIndex + '" class="btn btn-outline-secondary" onclick="compareRemove(\'addCompare' + compareAddIndex + '\')">삭제</button>';
+		text += '<button id="addBtEdit' + compareAddIndex + '" class="btn btn-outline-primary" onclick="newCompareActive(\'' + compareAddIndex + '\')">수정</button>';
+		text += '<button id="addBtCancel' + compareAddIndex + '" class="btn btn-dark" onclick="newCompareCancel(\'' + compareAddIndex + '\')" hidden>취소</button>';
+		text += '<button id="addBtSave' + compareAddIndex + '" class="btn btn-success" onclick="newCompareSave(\'' + compareAddIndex + '\')" hidden>저장</button></td>';
+		text += '<td hidden>'
+		text += '<input id="addHideSiteName' + compareAddIndex + '" type="text" hidden>'
+		text += '<input id="addHideSitePrice' + compareAddIndex + '" type="text" hidden>'
+		text += '<input id="addHideSiteLink' + compareAddIndex + '" type="text" hidden>'
+		text += '</td></tr>';
+
+
+		$("#newSiteTr").before(text);
+		compareAddIndex++;
+	}
+
+	function deletePrd() {
+		var urlParams = new URL(location.href).searchParams;
+		var id = urlParams.get('prd_id');
+
+		var con = confirm("정말 삭제하시겠습니까?");
+
+		if(con == true) {
+			var data = {
+                'id' : id
+             };
+
+            $.ajax({
+              url:"/product/delete",
+              type:"POST",
+              data: JSON.stringify(data),
+              contentType: "application/json; charset=UTF-8",
+              success: function(result) {
+                  console.log(result);
+                  alert("삭제 되었습니다.");
+                  goPrdList();
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+        }
+	}
+
+	function prdSave() {
+		var urlParams = new URL(location.href).searchParams;
+		var id = urlParams.get('prd_id');
+
+		var name = $("#prd-name").val();
+		var img = $("#showImg").attr("src");
+		var showMain = $("#flexCheckChecked").is(':checked');
+
+		var data = {
+				'id' : id,
+                'name' : name,
+                'img' : img,
+                'showMain' : showMain
+             };
+
+            $.ajax({
+              url:"/product/create",
+              type:"POST",
+              data: JSON.stringify(data),
+              contentType: "application/json; charset=UTF-8",
+              success: function(result) {
+                  console.log(result);
+                  cateDataSave(id);
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+	}
+
+	function cateDataSave(prdId) {
+		prdCateList = [];
+
+		var cateIds = $("#cateList").find('span');
+		for (var i=0 ; i < cateIds.length ; i++) {
+			var cateId = cateIds[i].innerHTML;
+			prdCateList.push({"productId":prdId, "categoryId":cateId});
+		}
+
+		if (prdCateList.length == 0) {
+			$.ajax({
+              url:"/product/category/delete/" + prdId,
+              type:"POST",
+              contentType: "application/json; charset=UTF-8",
+              success: function(result) {
+                  console.log(result);
+                  compareDataSave(prdId);
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+		} else {
+			$.ajax({
+				  url:"/product/category/update",
+				  type:"POST",
+				  data: JSON.stringify(prdCateList),
+				  contentType: "application/json; charset=UTF-8",
+				  success: function(result) {
+					  console.log(result);
+					  compareDataSave(prdId);
+				  },
+				  error: function() {
+					  alert("에러 발생");
+				  }
+				})
+         }
+	}
+
+	function compareDataSave(prdId) {
+		// 가격 비교 저장
+    	prdCompareList = [];
+    	$("#compareBody tr").each(function() {
+    		var siteName = $(this).find("td").eq(0).find("input").val();
+    		var sitePrice = $(this).find("td").eq(1).find("input").val();
+    		var siteLink = $(this).find("td").eq(2).find("input").val();
+
+    		if ( $(this).find("td").eq(0).html().includes('disabled') == true ) {
+    			prdCompareList.push({"productId":prdId, "siteName":siteName, "sitePrice":sitePrice, "siteLink":siteLink});
+    		}
+    	});
+
+    	if (prdCompareList.length == 0) {
+    		$.ajax({
+              url:"/product/compare/delete/" + prdId,
+              type:"POST",
+              contentType: "application/json; charset=UTF-8",
+              success: function(result) {
+                  console.log(result);
+                  alert("저장 되었습니다.");
+                  location.reload();
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+    	} else {
+    		$.ajax({
+    		  url:"/product/compare/update",
+              type:"POST",
+              data: JSON.stringify(prdCompareList),
+              contentType: "application/json; charset=UTF-8",
+              success: function(result) {
+                  console.log(result);
+                  alert("저장 되었습니다.");
+                  location.reload();
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+    	}
+	}
+
+	function toBase64(event) {
+		var reader = new FileReader();
+		reader.readAsDataURL(event.target.files[0]);
+		reader.onload = function(event) {
+			var base64 = event.target.result;// img -> base64
+			$("#showImg").attr("src", base64);
+		};
+	}
+
+
+</script>
+</body>
+</html>

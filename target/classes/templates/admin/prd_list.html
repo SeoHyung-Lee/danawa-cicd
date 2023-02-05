@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="액상가격비교|액상다나와">
+	<title>액상다나와 | 관리자</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+	<link href="/admin/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/admin/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    
+	<div class="page-container">
+
+		<!--page navigation -->
+		<div class="page-nav">
+			<a href="#" onclick="goCateEdit()" class="nav-logo">
+				<img src="/admin/images/logo_wh.png">
+			</a>
+		<hr>
+			<ul class="nav nav-pills flex-column mb-auto">
+				<li><a href="#" onclick="goCateEdit()" class="nav-link">분류 관리</a></li>
+				<li><a href="#" onclick="goPrdList()" class="nav-link active">상품 관리</a></li>
+				<li><a href="#" onclick="goPrdAdd()" class="nav-link">상품 등록</a></li>
+			</ul>
+		</div>
+		<!--//page navigation -->
+
+
+		<!--page contents -->
+		<div class="page-contents">
+				
+			<!--page title-->
+			<div class="page-title">
+				<h3 class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+				  <span class="fs-5 fw-semibold">상품 관리</span>
+				</h3>
+			</div>
+			<!--page title-->
+
+			<!-- category select -->
+			<div class="bg-light row">
+				
+				<!--1차분류-->
+				<div class="col-3 p-3">
+					<select class="form-select" id="cate-one" required="" onchange="changeCateOne()">
+    					<option value="">--1차분류--</option>
+						<option value="MOUTH">입호흡</option>
+						<option value="LUNG">폐호흡</option>
+					</select>
+				</div>
+				<!--//1차분류-->
+				
+				<!--2차분류-->
+				<div class="col-3 p-3">
+					<select class="form-select" id="cate-two" required="" onchange="changeCateTwo()">
+    					<option value="">--2차분류--</option>
+						<option value="BRAND">브랜드</option>
+						<option value="TASTE">맛</option>
+					</select>
+				</div>
+				<!--//2차분류-->
+				
+				<!--3차분류-->
+				<div class="col-3 p-3">
+					<select class="form-select" id="cate-name" required="">
+    					<option value="">--3차분류--</option>
+					</select>
+				</div>
+				<!--//3차분류-->
+				
+				<div class="col-3 p-3">
+					<button class="btn btn-primary" onclick="cateSearch()">선택하기</button>
+				</div>
+				
+			</div>
+			<!-- //category select -->
+			
+			<!--product list-->
+			<div class="prd-list row">				
+				<div class="col-12 mt-3">
+					
+					<table class="table">
+						<colgroup>
+							<col width="10%">
+							<col width="10%">
+							<col width="*">
+							<col width="20%">
+							<col width="10%">
+						</colgroup>
+						<thead class="table-light">
+							<tr>
+								<th scope="col">상품 ID</th>
+								<th scope="col">상품 사진</th>
+								<th scope="col">상품명</th>
+								<th scope="col">상품 URL</th>
+								<th scope="col">상품 수정</th>
+							</tr>
+						</thead>
+						<tbody>
+						
+						<!--item-->
+							<tr th:each="prd : ${productDtoList}">
+								<td><span th:text = "${prd.id}" /></td>
+								<td><img class="thumb" th:src="${prd.img}"></td>
+								<td><a href="#" th:onclick="'goPrdEdit(\'' + ${prd.id} + '\')'" th:text = "${prd.name}"></a></td>
+								<td>/prd?id=<span th:text = "${prd.id}" /></td>
+								<td><button class="btn btn-outline-secondary" th:onclick="'deletePrd(\'' + ${prd.id} + '\')'">삭제</button> <button class="btn btn-outline-primary" th:onclick="'goPrdEdit(\'' + ${prd.id} + '\')'">수정</button></td>
+							</tr>
+						<!--//item-->
+						  
+					  </tbody>
+					</table>
+					
+					<nav aria-label="Page navigation example">
+						<ul id="page-number" class="pagination justify-content-center"></ul>
+					</nav>
+					
+				</div>
+				<div class="col-12 text-end">
+					<button class="btn btn-primary" onclick="goPrdAdd()">상품 등록</button>
+				</div>
+			</div>
+			<!--//product list-->
+
+		</div>
+		<!--// page contents -->
+
+	</div>
+
+
+<script src="/admin/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/admin/js/common.js"></script>
+<script src="/admin/js/admin_redirect.js"></script>
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	window.onload = function(){
+		var urlParams = new URL(location.href).searchParams;
+
+		var cateOne = urlParams.get('cate_one');
+		if (cateOne !== 'all') {
+			$("#cate-one").val(cateOne);
+		}
+
+		var cateTwo = urlParams.get('cate_two');
+		if (cateTwo !== 'all') {
+			$("#cate-two").val(cateTwo).trigger("change");
+		}
+
+		var cateName = urlParams.get('cate_name');
+		if (cateName !== 'all') {
+			setTimeout(() => $("#cate-name").val(cateName), 200);
+		}
+
+		// 페이지수 지정
+		var nowPage = urlParams.get('page');
+		var totalPage = [[${totalPage}]];
+		$("#page-number").empty();
+
+		var pageStart = $("<li class='page-item'><a class='page-link' href='#' onclick='pageMove(0)'>◀</a></li>");
+		var pageEnd = $("<li class='page-item'><a class='page-link' href='#' onclick='pageMove(" + (totalPage-1) + ")'>▶</a></li>");
+
+		$("#page-number").append(pageStart);
+
+		for (var i = 0 ; i < totalPage ; i++) {
+			var pageNum;
+			if (nowPage == i) {
+				pageNum = $("<li class='page-item active'><a class='page-link' href='#' onclick='pageMove(" + i +")'>" + (i+1) + "</a></li>");
+			} else {
+				pageNum = $("<li class='page-item'><a class='page-link' href='#' onclick='pageMove(" + i +")'>" + (i+1) + "</a></li>");
+			}
+			$("#page-number").append(pageNum);
+		}
+
+		$("#page-number").append(pageEnd);
+	}
+
+	function pageMove(pageNum) {
+		var hrefLink = window.location.protocol + "//" + window.location.host + window.location.pathname;
+		var params = new URLSearchParams(location.search);
+
+		params.set('page', pageNum);
+		location.href = hrefLink + "?" + params;
+	}
+
+	function cateSearch() {
+		var hrefLink = window.location.protocol + "//" + window.location.host + window.location.pathname;
+		var params = new URLSearchParams(location.search);
+
+		var cateOne = $("#cate-one").val() == '' ? 'all' : $("#cate-one").val();
+		var cateTwo = $("#cate-two").val() == '' ? 'all' : $("#cate-two").val();
+		var cateName = $("#cate-name").val() == '' ? 'all' : $("#cate-name").val();
+
+		params.set('cate_one', cateOne);
+		params.set('cate_two', cateTwo);
+		params.set('cate_name', cateName);
+		location.href = hrefLink + "?" + params;
+	}
+
+	function changeCateOne() {
+		$("#cate-two").val('');
+
+		$("#cate-name").empty();
+        var emptyText = $("<option value=''>--3차분류--</option>");
+        $("#cate-name").append(emptyText);
+        $("#cate-name").val('');
+	}
+
+	function changeCateTwo() {
+		var cateOne = $("#cate-one").val();
+		var cateTwo = $("#cate-two").val();
+
+		if (cateOne == '') {
+			alert('1차 분류를 선택하세요');
+			$("#cate-two").val('');
+			return;
+		}
+
+		$.ajax({
+              url:"/category/find",
+              type:"GET",
+              data:{
+                'cate_one' : cateOne,
+                'cate_two' : cateTwo
+              },
+              contentType: "application/json",
+              success: function(result) {
+                  console.log(result);
+
+                  $("#cate-name").empty();
+                  var emptyText = $("<option value=''>--3차분류--</option>");
+                  $("#cate-name").append(emptyText);
+
+                  for (var cnt = 0; cnt < result.length; cnt++) {
+                  	var option = $("<option value="+result[cnt].categoryName+">"+result[cnt].categoryName+"</option>");
+                  	$("#cate-name").append(option);
+                  }
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+	}
+
+	function deletePrd(id) {
+		var con = confirm("정말 삭제하시겠습니까?");
+
+		if(con == true) {
+			var data = {
+                'id' : id
+             };
+
+            $.ajax({
+              url:"/product/delete",
+              type:"POST",
+              data: JSON.stringify(data),
+              contentType: "application/json; charset=UTF-8",
+              success: function(result) {
+                  console.log(result);
+                  alert("삭제 되었습니다.");
+                  location.reload();
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+        }
+	}
+
+	function goPrdEdit(id) {
+		location.href = window.location.protocol + "//" + window.location.host + "/admin/prd/edit?prd_id=" + id;
+	}
+
+</script>
+</body>
+</html>

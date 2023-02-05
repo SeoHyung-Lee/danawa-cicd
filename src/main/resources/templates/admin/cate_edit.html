@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="액상가격비교|액상다나와">
+	<title>액상다나와 | 관리자</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+	<link href="/admin/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/admin/css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+	<div class="page-container">
+
+		<!--page navigation -->
+		<div class="page-nav">
+			<a href="#" onclick="goCateEdit()" class="nav-logo">
+			<img src="/admin/images/logo_wh.png">
+			</a>
+		<hr>
+			<ul class="nav nav-pills flex-column mb-auto">
+				<li><a href="#" onclick="goCateEdit()" class="nav-link active">분류 관리</a></li>
+				<li><a href="#" onclick="goPrdList()" class="nav-link">상품 관리</a></li>
+				<li><a href="#" onclick="goPrdAdd()" class="nav-link">상품 등록</a></li>
+			</ul>
+		</div>
+		<!--//page navigation -->
+
+
+		<!--page contents -->
+		<div class="page-contents">
+
+			<!--page title-->
+			<div class="page-title">
+				<h3 class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+				  <span class="fs-5 fw-semibold">분류관리</span>
+				</h3>
+			</div>
+			<!--page title-->
+
+			<!-- category select -->
+			<div class="cont-left bg-light">
+
+				<!--1차분류 A-->
+				<p class="cate-main">입호흡</p>
+				<!--//1차분류 A-->
+
+				<!--2차분류-->
+				<ul class="cate-select">
+
+				  <li class="select-item">
+					<button class="btn-select" data-bs-toggle="collapse" data-bs-target="#cateA1" aria-expanded="true">브랜드</button>
+
+					<!--3차분류-->
+					<div class="collapse show" id="cateA1">
+						<ul class="btn-select-nav" id="mouthBrandUl">
+							<li th:each="cate : ${categoryList}" th:if="${cate.categoryOne.toString().equals('MOUTH')} and ${cate.categoryTwo.toString().equals('BRAND')}">
+								<a href="#" th:text="${cate.categoryName}" th:onclick="'cateEdit(\'' + ${cate.id} + '\', \'' + ${cate.categoryName} + '\', \'' + ${cate.categoryOne} + '\', \'' + ${cate.categoryTwo} + '\')'"></a>
+								<button class="btn-edit" th:onclick="'cateEdit(\'' + ${cate.id} + '\', \'' + ${cate.categoryName} + '\', \'' + ${cate.categoryOne} + '\', \'' + ${cate.categoryTwo} + '\')'">수정</button>
+							</li>
+						</ul>
+
+						<div class="text-center my-3"><button class="btn-add" onclick="mouthBrandAdd()">분류추가</button></div>
+					</div>
+					<!--//3차분류-->
+
+				  </li>
+
+				  <li class="select-item">
+					<button class="btn-select" data-bs-toggle="collapse" data-bs-target="#cateA2" aria-expanded="false">맛</button>
+
+					<!--3차분류-->
+					<div class="collapse" id="cateA2">
+						<ul class="btn-select-nav" id="mouthTasteUl">
+							<li th:each="cate : ${categoryList}" th:if="${cate.categoryOne.toString().equals('MOUTH')} and ${cate.categoryTwo.toString().equals('TASTE')}">
+								<a href="#" th:text="${cate.categoryName}" th:onclick="'cateEdit(\'' + ${cate.id} + '\', \'' + ${cate.categoryName} + '\', \'' + ${cate.categoryOne} + '\', \'' + ${cate.categoryTwo} + '\')'"></a>
+								<button class="btn-edit" th:onclick="'cateEdit(\'' + ${cate.id} + '\', \'' + ${cate.categoryName} + '\', \'' + ${cate.categoryOne} + '\', \'' + ${cate.categoryTwo} + '\')'">수정</button>
+							</li>
+						</ul>
+						<div class="text-center my-3"><button class="btn-add" onclick="mouthTasteAdd()">분류추가</button></div>
+					</div>
+					<!--//3차분류-->
+
+				  </li>
+
+				</ul>
+				<!--//2차분류-->
+
+
+
+				<!--1차분류 B-->
+				<p class="cate-main">폐호흡</p>
+				<!--//1차분류 B-->
+
+				<!--2차분류-->
+				<ul class="cate-select">
+
+				  <li class="mb-1">
+					<button class="btn-select" data-bs-toggle="collapse" data-bs-target="#cateB1" aria-expanded="true">브랜드</button>
+
+					<!--3차분류-->
+					<div class="collapse show" id="cateB1">
+						<ul class="btn-select-nav" id="lungBrandUl">
+							<li th:each="cate : ${categoryList}" th:if="${cate.categoryOne.toString().equals('LUNG')} and ${cate.categoryTwo.toString().equals('BRAND')}">
+								<a href="#" th:text="${cate.categoryName}" th:onclick="'cateEdit(\'' + ${cate.id} + '\', \'' + ${cate.categoryName} + '\', \'' + ${cate.categoryOne} + '\', \'' + ${cate.categoryTwo} + '\')'"></a>
+								<button class="btn-edit" th:onclick="'cateEdit(\'' + ${cate.id} + '\', \'' + ${cate.categoryName} + '\', \'' + ${cate.categoryOne} + '\', \'' + ${cate.categoryTwo} + '\')'">수정</button>
+							</li>
+						</ul>
+
+						<div class="text-center my-3"><button class="btn-add" onclick="lungBrandAdd()">분류추가</button></div>
+
+					</div>
+					<!--//3차분류-->
+
+				  </li>
+
+				  <li class="mb-1">
+					<button class="btn-select" data-bs-toggle="collapse" data-bs-target="#cateB2" aria-expanded="false">맛</button>
+
+					<!--3차분류-->
+					<div class="collapse" id="cateB2">
+						<ul class="btn-select-nav" id="lungTasteUl">
+							<li th:each="cate : ${categoryList}" th:if="${cate.categoryOne.toString().equals('LUNG')} and ${cate.categoryTwo.toString().equals('TASTE')}">
+								<a href="#" th:text="${cate.categoryName}" th:onclick="'cateEdit(\'' + ${cate.id} + '\', \'' + ${cate.categoryName} + '\', \'' + ${cate.categoryOne} + '\', \'' + ${cate.categoryTwo} + '\')'"></a>
+								<button class="btn-edit" th:onclick="'cateEdit(\'' + ${cate.id} + '\', \'' + ${cate.categoryName} + '\', \'' + ${cate.categoryOne} + '\', \'' + ${cate.categoryTwo} + '\')'">수정</button>
+							</li>
+						</ul>
+						<div class="text-center my-3"><button class="btn-add" onclick="lungTasteAdd()">분류추가</button></div>
+					</div>
+					<!--//3차분류-->
+
+				  </li>
+
+				</ul>
+				<!--//2차분류-->
+
+			</div>
+			<!-- //category select -->
+
+			<!-- category detail -->
+			<div class="cont-right">
+				<div class="cate-detail">
+
+					<div class="form-group">
+						<label for="cate-now" class="col-form-label">현재분류</label>
+						<div class="input-wrap">
+						<input type="text" readonly class="form-control-plaintext" id="cate-now">
+						</div>
+					</div>
+
+					<div class="form-group row">
+						<label for="cate-name" class="col-form-label">분류명</label>
+						<div class="input-wrap">
+							<input type="text" class="form-control" id="cate-name" placeholder="분류명을 입력해주세요">
+							<input type="text" id="cate-id" hidden>
+						</div>
+					</div>
+
+					<div class="form-group row border-bottom pb-3">
+						<p for="cate-name" class="col-form-label">상품목록</p>
+						<div class="input-wrap">
+							<a class="btn btn-outline-primary" href="#" onclick="goPrdCate()">상품 목록 바로가기</a>
+						</div>
+					</div>
+
+					<div class="btn-wrap">
+						<button type="button" class="btn btn-secondary" onclick="deleteButton()">삭제하기</button>
+						<button type="button" class="btn btn-dark" onclick="cancel()">취소하기</button>
+						<button type="button" value="Submit" class="btn btn-primary" onclick="save()">저장하기</button>
+					</div>
+
+				</div>
+			</div>
+			<!-- //category detail -->
+		</div>
+		<!--// page contents -->
+
+	</div>
+
+
+<script src="/admin/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/admin/js/common.js"></script>
+<script src="/admin/js/admin_redirect.js"></script>
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	function goPrdCate() {
+		var url = window.location.protocol + "//" + window.location.host + "/admin";
+
+		if ($("#cate-now").val() == '') {
+			alert("선택 후 상품목록 바로가기 버튼을 클릭하세요");
+			return;
+		}
+
+		var name = $("#cate-name").val();
+		var cateOne = '';
+		var cateTwo = '';
+
+		if ($("#cate-now").val().includes('입호흡')) {
+			cateOne = 'MOUTH';
+		} else {
+			cateOne = 'LUNG';
+		}
+
+		if ($("#cate-now").val().includes('브랜드')) {
+			cateTwo = 'BRAND';
+		} else {
+			cateTwo = 'TASTE';
+		}
+
+		location.href = url + "/prd/list?page=0&size=15&cate_one=" + cateOne +"&cate_two=" + cateTwo + "&cate_name=" + name;
+	}
+
+	function mouthBrandAdd() {
+		var ul = $("#mouthBrandUl");
+		var text = '<li><a href="#" onclick="cateEdit(\'\',\'\',\'MOUTH\',\'BRAND\')">이름미정</a><button class="btn-edit" onclick="cateEdit(\'\',\'\',\'MOUTH\',\'BRAND\')">수정</button></li>';
+		ul.append(text);
+	}
+
+	function mouthTasteAdd() {
+		var ul = $("#mouthTasteUl");
+		var text = '<li><a href="#" onclick="cateEdit(\'\',\'\',\'MOUTH\',\'TASTE\')">이름미정</a><button class="btn-edit" onclick="cateEdit(\'\',\'\',\'MOUTH\',\'TASTE\')">수정</button></li>';
+		ul.append(text);
+	}
+
+	function lungBrandAdd() {
+		var ul = $("#lungBrandUl");
+		var text = '<li><a href="#" onclick="cateEdit(\'\',\'\',\'LUNG\',\'BRAND\')">이름미정</a><button class="btn-edit" onclick="cateEdit(\'\',\'\',\'LUNG\',\'BRAND\')">수정</button></li>';
+		ul.append(text);
+	}
+
+	function lungTasteAdd() {
+		var ul = $("#lungTasteUl");
+		var text = '<li><a href="#" onclick="cateEdit(\'\',\'\',\'LUNG\',\'TASTE\')">이름미정</a><button class="btn-edit" onclick="cateEdit(\'\',\'\',\'LUNG\',\'TASTE\')">수정</button></li>';
+		ul.append(text);
+	}
+
+	function cateEdit(id, name, categoryOne, categoryTwo) {
+		var now = '';
+		if (categoryOne == 'MOUTH' && categoryTwo == 'BRAND') {
+			now = '입호흡/브랜드';
+		} else if (categoryOne == 'MOUTH' && categoryTwo == 'TASTE') {
+			now = '입호흡/맛';
+		} else if (categoryOne == 'LUNG' && categoryTwo == 'BRAND') {
+			now = '폐호흡/브랜드';
+		} else if (categoryOne == 'LUNG' && categoryTwo == 'TASTE') {
+			now = '폐호흡/맛';
+		}
+
+		$("#cate-now").val(now);
+		$("#cate-id").val(id);
+		$("#cate-name").val(name);
+	}
+
+	function save() {
+		if ($("#cate-now").val() == '') {
+			alert("선택 후 저장 버튼을 클릭하세요");
+			return;
+		}
+
+		var id = $("#cate-id").val();
+		var name = $("#cate-name").val();
+		var cateOne = '';
+		var cateTwo = '';
+
+		if ($("#cate-now").val().includes('입호흡')) {
+			cateOne = 'MOUTH';
+		} else {
+			cateOne = 'LUNG';
+		}
+
+		if ($("#cate-now").val().includes('브랜드')) {
+			cateTwo = 'BRAND';
+		} else {
+			cateTwo = 'TASTE';
+		}
+
+		var data = {
+				'id' : id,
+                'categoryName' : name,
+                'categoryOne' : cateOne,
+                'categoryTwo' : cateTwo,
+             };
+
+            $.ajax({
+              url:"/category/create",
+              type:"POST",
+              data: JSON.stringify(data),
+              contentType: "application/json; charset=UTF-8",
+              success: function(result) {
+                  console.log(result);
+                  alert("저장 되었습니다.");
+                  location.reload();
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+	}
+
+	function cancel() {
+		$("#cate-now").val('');
+		$("#cate-id").val('');
+		$("#cate-name").val('');
+	}
+
+	function deleteButton() {
+		var id = $("#cate-id").val();
+		if (id == '') {
+			alert("선택 후 삭제 버튼을 클릭하세요");
+			return;
+		}
+
+		var data = {
+                'id' : id
+             };
+
+            $.ajax({
+              url:"/category/delete",
+              type:"POST",
+              data: JSON.stringify(data),
+              contentType: "application/json; charset=UTF-8",
+              success: function(result) {
+                  console.log(result);
+                  alert("삭제 되었습니다.");
+                  location.reload();
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+	}
+</script>
+
+</body>
+</html>

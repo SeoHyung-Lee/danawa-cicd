@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+    #url: jdbc:mysql://localhost:3306/tobacco?useSSL=false&allowPublicKeyRetrieval=true&useTimezone=true&serverTimezone=Asia/Seoul
+    #username: admin
+    #password: admin
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://waning1.cafe24.com:3306/waning1?useSSL=false&allowPublicKeyRetrieval=true&useTimezone=true&serverTimezone=Asia/Seoul
+    username: waning1
+    password: qpdlvlvmf12!
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true

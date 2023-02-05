@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="액상다나와 | 전자담배 액상 가격비교">
+    <title>액상다나와 | 전자담배 액상 가격비교</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+	<link href="/front/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/front/css/styles.css" rel="stylesheet">
+  </head>
+  <body>
+    
+	  <!-- main menu -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Eighth navbar example">
+	<div class="container">
+		<a class="navbar-brand" href="#" onclick="goMain()"><img src="/front/images/logo_wh.png"></a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarsExample07">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item">
+					<a class="nav-link" href="#" onclick="goCateogory('MOUTH')">입호흡 액상</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#" onclick="goCateogory('LUNG')">폐호흡 액상</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>
+	  <!-- main menu -->
+	  
+<div class="wrap">	  
+<div class="contents container">
+	
+	<h4 class="my-3">액상 검색</h4>	
+	
+	<!-- 검색창 -->
+	<div class="row row-1 my-3">
+		<input class="form-control" type="search" placeholder="액상 검색" aria-label="Search" id="searchInput">
+	</div>
+	<!-- 검색창 -->
+	
+	<!--검색결과 없음-->
+	<div class="row" th:if="${prdList.size()} == 0">
+		<h5 class="my-4 text-center">
+			검색결과가 없습니다.<br><br>
+			<a class="btn btn-sm btn-outline-dark" href="#" onclick="goMain()">메인으로</a>
+			<a class="btn btn-sm btn-dark" href="#" onclick="history.back()">뒤로가기</a>
+		</h5>
+		<div class="box p-3">
+			<p class="text-center">정확한 검색결과를 얻기 위해 아래와 같이 해보세요</p>
+			<ul class="list-group list-group-flush">
+			  <li class="list-group-item">단어의 철자가 정확한지 확인해 보세요.</li>
+			  <li class="list-group-item">한글을 영어로 혹은 영어를 한글로 입력 했는지 확인해 보세요.</li>
+			  <li class="list-group-item">검색어의 단어 수를 줄이거나, 보다 일반적인 검색어로 다시 검색해 보세요.</li>
+			  <li class="list-group-item">두 단어 이상의 검색어인 경우, 띄어쓰기를 확인해 보세요.</li>
+			</ul>		
+		</div>
+		
+	</div>
+	<!--검색결과 없음-->
+	
+	<!--검색결과 있음-->
+	<!-- product list -->
+	<div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 prd-list" th:if="${prdList.size()} > 0">
+		<div class="col" th:each="prd : ${prdList}">
+			<a href="#" th:onclick="'goPrdDetail(\'' + ${prd.id} + '\', \'' + ${prd.categoryOne.toString()} + '\')'"><!-- 상품url삽입 -->
+				<div class="card shadow-sm">
+					<img th:src="${prd.img}">
+					<div class="card-body">
+						<p class="card-text" th:text="${prd.name}"></p>
+						<p class="price">최저가: <span class="low-price" th:text="${prd.compareMinPrice > 999 ? #numbers.formatInteger(prd.compareMinPrice, 3, 'COMMA') + '원' : prd.compareMinPrice + '원'}" /></p>
+						<div class="text-end">
+							<p class="pricevs">가격비교: <span>[[${prd.compareCnt}]]건</span></p>
+							<button type="button" class="btn btn-sm btn-outline-primary">가격비교 바로가기</button>
+						</div>
+					</div>
+				</div>
+			</a>
+		</div>
+
+	</div>
+	<!-- //product list -->
+	
+	<!--검색결과 있음-->
+	
+	
+</div>
+<!--//contents-->
+
+<footer class="align-items-center py-3 border-top">
+	<div class="container">
+		<div class="col-12 d-flex align-items-center">
+		  <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+			<img src="/front/images/logo.png">
+		  </a>
+		  <span class="mb-3 mb-md-0 text-muted">© 2022 액상다나와, Inc. All rights reserve | 문의 : abcd@gmail.com</span>
+		</div>
+	</div>
+</footer>
+	
+</div>
+<!--//wrap-->
+<script src="/front/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/front/js/common.js"></script>
+<script src="/front/js/front_redirect.js"></script>
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+		$(document).ready(function () {
+			$("#searchInput").keyup(function(event) {
+				if (event.keyCode == 13) {
+					var searchText = $("#searchInput").val();
+					if (searchText == '') {
+						alert("검색 할 텍스트를 입력하세요.");
+						return;
+					}
+					goSearch(searchText);
+				}
+			})
+	  	})
+</script>
+  </body>
+</html>

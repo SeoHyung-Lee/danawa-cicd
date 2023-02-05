@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="액상가격비교|액상다나와">
+    <title>액상다나와 | 관리자</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+	<link href="/admin/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/admin/css/styles.css" rel="stylesheet">
+  </head>
+  <body class="text-center login">
+    
+<main class="form-signin w-100 m-auto">
+  <div>
+    <img class="mb-4" src="/admin/images/logo.png" alt="액상다나와로고">
+    <h1 class="h3 mb-3 fw-normal">관리자 로그인</h1>
+
+    <div class="form-floating">
+      <input type="text" class="form-control" id="floatingInput" placeholder="아이디를 입력해주세요">
+      <label for="floatingInput">아이디</label>
+    </div>
+    <div class="form-floating">
+      <input type="password" class="form-control" id="floatingPassword" placeholder="비밀번호링">
+      <label for="floatingPassword">비밀번호</label>
+    </div>
+    <button class="w-100 btn btn-lg btn-primary" onclick="login()">로그인</button>
+    <p class="mt-5 mb-3 text-muted">&copy;2022. 액상다나와 All rights reserved.</p>
+  </div>
+</main>
+<script src="/admin/js/admin_redirect.js"></script>
+<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+      window.onload = function(){
+        var link = document.location.href;
+        if (!link.includes('admin/login')) {
+          goLogin();
+        }
+      }
+
+      function login() {
+        var id = document.getElementById("floatingInput").value;
+        var password = document.getElementById("floatingPassword").value;
+
+        if (id == '') {
+          alert('아이디를 입력해주세요');
+        } else if (password == '') {
+          alert('패스워드를 입력해주세요');
+        } else {
+            $.ajax({
+              url:"/login/check",
+              type:"GET",
+              data: {
+                'id' : id,
+                'pwd' : password
+              },
+              contentType: "application/json; charset=UTF-8",
+              success: function(result) {
+                  if (result == true) {
+                    var url = window.location.protocol + "//" + window.location.host + "/admin/cate/edit";
+                    window.location.href = url;
+                  } else {
+                    alert("미등록 사용자 입니다.");
+                  }
+              },
+              error: function() {
+                  alert("에러 발생");
+              }
+            })
+        }
+      }
+</script>
+    
+  </body>
+</html>

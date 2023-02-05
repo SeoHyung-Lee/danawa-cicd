@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="액상다나와 | 전자담배 액상 가격비교">
+    <title>액상다나와 | 전자담배 액상 가격비교</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+	<link href="/front/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/front/css/styles.css" rel="stylesheet">
+  </head>
+  <body>
+    
+	  <!-- main menu -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Eighth navbar example">
+	<div class="container">
+		<a class="navbar-brand" href="#" onclick="goMain()"><img src="/front/images/logo_wh.png"></a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample07" aria-controls="navbarsExample07" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarsExample07">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item">
+					<a id="prd-nav-mouth" class="nav-link" aria-current="page" href="#" onclick="goCateogory('MOUTH')">입호흡 액상</a>
+				</li>
+				<li class="nav-item">
+					<a id="prd-nav-lung" class="nav-link" href="#" onclick="goCateogory('LUNG')">폐호흡 액상</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>
+	  <!-- main menu -->
+	  
+<div class="wrap">	  
+<div class="contents container">
+	
+	<h4 class="my-3"><span id="prd-detail-title"></span></h4>
+	
+	<!--category name 브랜드명, 맛-->
+	<h5 class="mt-3 mb-5 text-center">[[${product.name}]]</h5>
+	<!--category name 브랜드명, 맛-->
+	
+	<!-- product detail -->
+	<div class="row prd-detail">
+		<div class="col-12 col-sm-12 col-md-6 col-lg-4 text-center">
+			<img th:src="${product.img}">
+		</div>
+		
+		<div class="col-12 col-sm-12 col-md-6 col-lg-8">
+			
+			<!--판매처 리스트 테이블-->
+			<table class="my-3 table bg-white">
+				<thead class="table-dark">
+					<tr>
+						<th scope="col">판매처</th>
+						<th scope="col">판매가</th>
+						<th scope="col">판매 링크</th>
+					</tr>
+				</thead>
+				<tbody>
+					
+					<!--item-->
+					<tr th:each="prd : ${product.priceCompareDtos}">
+						<td>[[${prd.siteName}]]</td>
+						<td class="price" th:text="${prd.sitePrice > 999 ? #numbers.formatInteger(prd.sitePrice, 3, 'COMMA') + '원' : prd.sitePrice + '원'}"></td>
+						<td><a class="btn btn-sm btn-warning" th:href="${prd.siteLink}" target="_blank">바로가기</a></td>
+					</tr>
+					<!--//item-->
+				</tbody>
+			
+			</table>
+			<!--판매처 리스트 테이블-->
+		
+		</div>
+
+	</div>
+	<!-- //product detail -->
+	
+</div>
+<!--//contents-->
+
+<footer class="align-items-center py-3 border-top">
+	<div class="container">
+		<div class="col-12 d-flex align-items-center">
+		  <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+			<img src="/front/images/logo.png">
+		  </a>
+		  <span class="mb-3 mb-md-0 text-muted">© 2022 액상다나와, Inc. All rights reserve | 문의 : abcd@gmail.com</span>
+		</div>
+	</div>
+</footer>
+	
+</div>
+<!--//wrap-->
+<script src="/front/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/front/js/common.js"></script>
+	  <script src="/front/js/front_redirect.js"></script>
+	  <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+	  <script type="text/javascript">
+		window.onload = function(){
+			var urlParams = new URL(location.href).searchParams;
+			var category = urlParams.get('category');
+
+			if (category == 'MOUTH') {
+				$("#prd-detail-title").text('입호흡 액상');
+				$("#prd-nav-mouth").addClass("active");
+				if ($("#prd-nav-lung").hasClass("active")) {
+            		$("#prd-nav-lung").removeClass("active");
+       			}
+			} else if (category == 'LUNG') {
+				$("#prd-detail-title").text('폐호흡 액상');
+				$("#prd-nav-lung").addClass("active");
+				if ($("#prd-nav-mouth").hasClass("active")) {
+            		$("#prd-nav-mouth").removeClass("active");
+       			}
+			}
+    	}
+	  </script>
+    
+  </body>
+</html>
