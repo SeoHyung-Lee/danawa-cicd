@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="액상가격비교|액상다나와">
+	<title>액상다나와 | 관리자</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+	<link href="/admin/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/admin/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    
+	<div class="page-container">
+
+		<!--page navigation -->
+		<div class="page-nav">
+			<a href="#" onclick="goCateEdit()" class="nav-logo">
+				<img src="/admin/images/logo_wh.png">
+			</a>
+		<hr>
+			<ul class="nav nav-pills flex-column mb-auto">
+				<li><a href="#" onclick="goCateEdit()" class="nav-link">분류 관리</a></li>
+				<li><a href="#" onclick="goPrdList()" class="nav-link">상품 관리</a></li>
+				<li><a href="#" onclick="goPrdAdd()" class="nav-link">상품 등록</a></li>
+				<li><a href="#" onclick="goShowMainSiteEdit()" class="nav-link active">등록 사이트 관리</a></li>
+			</ul>
+		</div>
+		<!--//page navigation -->
+
+
+		<!--page contents -->
+		<div class="page-contents">
+				
+			<!--page title-->
+			<div class="page-title">
+				<h3 class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+				  <span class="fs-5 fw-semibold">등록 사이트 관리</span>
+				</h3>
+			</div>
+			<!--page title-->
+			
+			<!--shop_list-->
+			<div class="shop_list">
+				
+				<div class="form-group">
+					<label class="col-form-label">등록 사이트 관리</label>
+					<div class="bg-light pb-3">
+						<table class="table">
+						<colgroup>
+							<col width="15%">
+							<col width="*">
+							<col width="10%">
+							<col width="20%">
+						</colgroup>
+						<thead class="table-dark">
+							<tr>
+								<th scope="col">판매처</th>
+								<th scope="col">URL</th>
+								<th scope="col">메인진열 여부</th>
+								<th scope="col">  </th>
+							</tr>
+						</thead>
+						<tbody id="siteListBody">
+						  
+						<!--item 1_ 기본 아이템 : 상시노출-->
+							<tr th:id="'siteList' + ${site.id}" th:each="site : ${showMainSites}">
+								<td><input type="text" th:id="'siteName' + ${site.id}" class="form-control" placeholder="판매처" th:value="${site.siteName}"></td>
+								<td><input type="text" th:id="'siteUrl' + ${site.id}" class="form-control" placeholder="URL을 입력하세요" th:value="${site.siteLink}"></td>
+								<td>
+									<div class="form-check pt-2">
+										<input th:id="'siteMainCheck' + ${site.id}" class="form-check-input" type="checkbox" id="flexCheckChecked" th:checked="${site.showMain}">
+										<label class="form-check-label" for="flexCheckChecked">
+									진열함
+								  </label>
+								</div></td>
+								<td>
+									<button class="btn btn-success" th:onclick="'saveSite(\'siteList' + ${site.id} + '\')'">저장</button>
+									<button class="btn btn-secondary" th:onclick="'removeSite(\'siteList' + ${site.id} + '\')'">삭제</button>
+								</td>
+							</tr>
+						<!--//item-->
+							
+					  	</tbody>
+						</table>
+						<p class="text-center mb-3"><button class="btn btn-primary" onclick="siteAdd()">사이트 추가</button></p>
+					</div>
+				</div>
+				
+			</div>
+			<!--//shop_list-->
+
+			
+			
+
+		</div>
+		<!--// page contents -->
+
+	</div>
+
+
+	<script src="/admin/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/admin/js/common.js"></script>
+	<script src="/admin/js/admin_redirect.js"></script>
+	<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript">
+		var siteAddIndex = 0;
+
+		function siteAdd() {
+			var text = '<tr id = "new' + siteAddIndex + '">';
+			text += '<td><input id = "newName' + siteAddIndex + '" type="text" class="form-control" placeholder="판매처"></td>';
+			text += '<td><input id = "newUrl' + siteAddIndex + '" type="text" class="form-control" placeholder="URL을 입력하세요"></td>'
+			text += '<td>';
+			text += '<div class="form-check pt-2">';
+			text += '<input class="form-check-input" id = "newMainCheck' + siteAddIndex + '" type="checkbox" value="" id="flexCheckChecked">';
+			text += '<label class="form-check-label" for="flexCheckChecked">진열함</label>';
+			text += '</div></td>';
+			text += '<td><button class="btn btn-success" onclick="saveSite(\'new' + siteAddIndex + '\')">저장</button>';
+			text += '    <button class="btn btn-secondary" onclick="removeSite(\'new' + siteAddIndex + '\')">삭제</button></td>';
+			text += '</tr>';
+
+			$("#siteListBody").append(text);
+			siteAddIndex++;
+		}
+
+		function removeSite(id) {
+			if (id.includes('siteList')) {
+				// deleted true로 수정
+				var siteId = id.replace('siteList','');
+
+				$.ajax({
+				  url:"/showmainsite/delete/" + siteId,
+				  type:"POST",
+				  data:{
+					'id' : siteId
+				  },
+				  contentType: "application/json",
+				  success: function(result) {
+					  console.log(result);
+				  },
+				  error: function() {
+					  alert("에러 발생");
+				  }
+				})
+			}
+
+			$("#" + id).remove();
+		}
+
+		function saveSite(id) {
+			var siteId = '';
+			var name = '';
+			var url = '';
+			var mainChecked = '';
+
+			if (id.includes('siteList')) {
+				siteId = id.replace('siteList','');
+
+				name = $("#siteName" + siteId).val();
+				url = $("#siteUrl" + siteId).val();
+				mainChecked = $("#siteMainCheck" + siteId).is(':checked');
+			} else {
+				siteId = id.replace('new','');
+
+				name = $("#newName" + siteId).val();
+				url = $("#newUrl" + siteId).val();
+				mainChecked = $("#newMainCheck" + siteId).is(':checked');
+				siteId = '';
+			}
+
+			$.ajax({
+				  url:"/showmainsite/create",
+				  type:"POST",
+				  data: JSON.stringify({
+					'id' : siteId,
+					'siteName' : name,
+					'siteLink' : url,
+					'showMain' : mainChecked
+				  }),
+				  contentType: "application/json",
+				  success: function(result) {
+					  alert("저장 되었습니다.");
+                	  location.reload();
+				  },
+				  error: function() {
+					  alert("에러 발생");
+				  }
+				})
+
+		}
+	</script>
+    
+</body>
+</html>

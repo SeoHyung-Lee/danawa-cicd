@@ -2,8 +2,10 @@ package com.cicd.admin.controller;
 
 import com.cicd.admin.dto.CategoryDto;
 import com.cicd.admin.dto.ProductDto;
+import com.cicd.admin.dto.ShowMainSiteDto;
 import com.cicd.admin.service.CategoryService;
 import com.cicd.admin.service.ProductService;
+import com.cicd.admin.service.ShowMainSiteService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -22,10 +24,12 @@ import java.util.List;
 public class AdminController {
     private final CategoryService categoryService;
     private final ProductService productService;
+    private final ShowMainSiteService showMainSiteService;
 
-    public AdminController(CategoryService categoryService, ProductService productService) {
+    public AdminController(CategoryService categoryService, ProductService productService, ShowMainSiteService showMainSiteService) {
         this.categoryService = categoryService;
         this.productService = productService;
+        this.showMainSiteService = showMainSiteService;
     }
 
     @GetMapping("/login")
@@ -80,6 +84,19 @@ public class AdminController {
         model.addAttribute("product", productDto);
 
         return "./admin/prd_edit.html";
+    }
+
+    @GetMapping("/showmainsite/edit")
+    public String showMainSiteEdit(Model model, HttpServletRequest request) {
+        if (!isLoginUserChk(request)) {
+            return "./admin/login.html";
+        }
+
+        List<ShowMainSiteDto> showMainSiteDtos = showMainSiteService.getShowMainSiteDtos();
+
+        model.addAttribute("showMainSites", showMainSiteDtos);
+
+        return "./admin/show_main_site_edit.html";
     }
 
     private Boolean isLoginUserChk(HttpServletRequest request) {

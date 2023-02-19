@@ -3,6 +3,7 @@ package com.cicd.admin.controller;
 import com.cicd.admin.dto.ProductDto;
 import com.cicd.admin.service.CategoryService;
 import com.cicd.admin.service.ProductService;
+import com.cicd.admin.service.ShowMainSiteService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,16 +14,18 @@ public class FrontController {
 
     private final CategoryService categoryService;
     private final ProductService productService;
+    private final ShowMainSiteService showMainSiteService;
 
-    public FrontController(CategoryService categoryService, ProductService productService) {
+    public FrontController(CategoryService categoryService, ProductService productService, ShowMainSiteService showMainSiteService) {
         this.categoryService = categoryService;
         this.productService = productService;
+        this.showMainSiteService = showMainSiteService;
     }
 
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("prdList", productService.getMainProductDtosByMain());
-        model.addAttribute("siteList", null);
+        model.addAttribute("siteList", showMainSiteService.getShowMainSiteDtosByMain());
 
         return "./front/main.html";
     }

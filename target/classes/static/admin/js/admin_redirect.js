@@ -15,3 +15,7 @@ var url = window.location.protocol + "//" + window.location.host + "/admin";
 	function goCateEdit() {
 		window.location.href = url + "/cate/edit";
 	}
+
+	function goShowMainSiteEdit() {
+	    window.location.href = url + "/showmainsite/edit";
+	}

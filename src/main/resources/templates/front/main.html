@@ -105,21 +105,7 @@
 	<!-- 등록된 사이트 리스트 //수동관리 -->	
 	<h4 class="my-3">등록된 사이트</h4>
 	<div class="text-center">
-		<a href="http://49vape.com/" target="_blank" class="btn btn-success mb-2">49vape</a>
-		<a href="https://99juice.co.kr/" target="_blank" class="btn btn-success mb-2">99액상</a>
-		<a href="https://tjf.kr/" target="_blank" class="btn btn-success mb-2">더쥬스팩토리</a>
-		<a href="https://만원의행복.com/" target="_blank" class="btn btn-success mb-2">만원의행복</a>
-		<a href="https://모두의액상.kr/" target="_blank" class="btn btn-success mb-2">모두의액상</a>
-		<a href="https://sodocha.com/" target="_blank" class="btn btn-success mb-2">소독차</a>
-		<a href="https://juice24.kr/" target="_blank" class="btn btn-success mb-2">액상24</a>
-		<a href="https://juiceshop.kr/" target="_blank" class="btn btn-success mb-2">액상샵</a>
-		<a href="https://actflix.kr/" target="_blank" class="btn btn-success mb-2">액플릭스</a>
-		<a href="https://www.연기파.kr/" target="_blank" class="btn btn-success mb-2">연기파</a>
-		<a href="https://이삼.com/" target="_blank" class="btn btn-success mb-2">이삼액상</a>
-		<a href="https://juicegram.kr/" target="_blank" class="btn btn-success mb-2">쥬스그램</a>
-		<a href="https://juicebox.co.kr/" target="_blank" class="btn btn-success mb-2">쥬스박스</a>
-		<a href="https://kimivape.com/" target="_blank" class="btn btn-success mb-2">키미베이프</a>
-		
+		<a th:each="site : ${siteList}" th:href="${site.siteLink}" target="_blank" class="btn btn-success mb-2 mx-1" th:text="${site.siteName}" />
 	</div>
 	
 	<!-- //등록된 사이트 리스트 //수동관리 -->

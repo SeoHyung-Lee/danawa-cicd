@@ -45,4 +45,12 @@ create table tobacco.admin_user (
     PRIMARY KEY (`id`)
 );
 
-insert into tobacco.admin_user(name, user_id, user_pwd, deleted) values ('관리자','waning','qpdlvlvmf12!@',false);
+
+create table tobacco.show_main_site (
+    id INT NOT NULL AUTO_INCREMENT,
+    site_name varchar(255) NOT NULL,
+    site_link varchar(255),
+    show_main tinyint(1) DEFAULT false,
+    deleted tinyint(1) DEFAULT false,
+    PRIMARY KEY (`id`)
+);
